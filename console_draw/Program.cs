@@ -112,7 +112,7 @@ namespace console_draw
             Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 6);
             Console.Write("Help:");
             Console.SetCursorPosition(Console.WindowWidth / 2 -9, Console.WindowHeight / 10 + 8);
-            Console.Write("Delete: reseting the canvas");
+            Console.Write("Delete: resets the canvas");
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 10);
             Console.Write("Z: undoing the last cube");
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 11);
