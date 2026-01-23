@@ -7,8 +7,7 @@ namespace console_draw
     {
         public static int[,] current_page = new int[Console.WindowWidth, Console.WindowHeight];
         public static int[,] page1 = new int[Console.WindowWidth, Console.WindowHeight];
-        public static int[,] page2 = new int[Console.WindowWidth, Console.WindowHeight];
-        public static int[,] page3 = new int[Console.WindowWidth, Console.WindowHeight];
+        public static List<string> undo = new List<string>();
         public static string[] savedata = File.ReadAllLines("mentes.txt");
         public static Dictionary<(int x, int y), (ConsoleColor color, char op)> save = new Dictionary<(int x, int y), (ConsoleColor color, char op)>();
         public static int color_value = 0;
@@ -143,7 +142,6 @@ namespace console_draw
         {
             Console.SetWindowSize(120,30);
             Tuple<int, int> last_pos = new Tuple<int, int>(0, 0);
-            bool first = true;
             pagegenerating();
             Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 2);
             var cur_color = new ConsoleColor();
@@ -156,22 +154,6 @@ namespace console_draw
                 for (int j = 0; j < page1.GetLength(1); j++)
                 {
                     page1[i, j] = 0;
-                }
-            }
-
-            for (int i = 0; i < page2.GetLength(0); i++)
-            {
-                for (int j = 0; j < page2.GetLength(1); j++)
-                {
-                    page2[i, j] = 0;
-                }
-            }
-
-            for (int i = 0; i < page3.GetLength(0); i++)
-            {
-                for (int j = 0; j < page3.GetLength(1); j++)
-                {
-                    page3[i, j] = 0;
                 }
             }
             bool rainbow_mode = false;
@@ -193,12 +175,12 @@ namespace console_draw
                             }
                             else
                             {
+                                Console.Write(' ');
+                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
+                                save[(Console.CursorLeft - 1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                                 Console.CursorTop++;
                                 Console.CursorLeft--;
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                Console.Write(' ');
-                                lastkeys.Add(key);
-                                save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                             }
                             break;
                         case ConsoleKey.UpArrow:
@@ -207,12 +189,12 @@ namespace console_draw
                             }
                             else
                             {
+                                Console.Write(' ');
+                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
+                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                                 Console.CursorTop--;
                                 Console.CursorLeft--;
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                Console.Write(' ');
-                                lastkeys.Add(key);
-                                save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                             }                     
                             break;
                         case ConsoleKey.RightArrow:
@@ -222,10 +204,10 @@ namespace console_draw
                             }
                             else
                             {
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
                                 Console.Write(' ');
-                                lastkeys.Add(key);
-                                save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
+                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                             }                           
                             break;
                         case ConsoleKey.LeftArrow:
@@ -235,11 +217,11 @@ namespace console_draw
                             }
                             else
                             {
-                                Console.CursorLeft = Console.CursorLeft - 2;
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
                                 Console.Write(' ');
-                                lastkeys.Add(key);
-                                save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                undo.Add((Console.CursorLeft-1, Console.CursorTop).ToString());
+                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                Console.CursorLeft = Console.CursorLeft - 2;
                             }         
                             break;
                         case ConsoleKey.Delete:
@@ -379,63 +361,16 @@ namespace console_draw
                             cur_color = (ConsoleColor)color_value;
                             color_value = 0;
                             Console.BackgroundColor = (ConsoleColor)color_value;
-                            if (lastkeys.Count > 0)
+                            if (undo.Count > 0)
                             {
-                                switch (lastkeys[lastkeys.Count - 1])
-                                {
-
-                                    case ConsoleKey.DownArrow:
-                                        if (first)
-                                        {
-                                            Console.CursorLeft--;
-                                            first = false;
-                                        }
-                                        Console.CursorTop++;
-                                        Console.Write(' ');
-                                        Console.Write(' ');
-                                        Console.CursorTop--;
-                                        Console.CursorLeft -= 2;
-                                        Console.Write(' ');
-                                        Console.CursorLeft--;
-                                        Console.CursorTop--;
-                                        Console.Write(' ');
-                                        Console.CursorLeft--;
-                                        lastkeys.RemoveAt(lastkeys.Count - 1);
-                                        break;
-                                    case ConsoleKey.UpArrow:
-                                        if (first)
-                                        {
-                                            Console.CursorLeft--;
-                                            first = false;
-                                        }
-                                        Console.CursorTop--;
-                                        Console.Write(' ');
-                                        Console.Write(' ');
-                                        Console.CursorTop++;
-                                        Console.CursorLeft -= 2;
-                                        Console.Write(' ');
-                                        Console.CursorLeft--;
-                                        Console.CursorTop++;
-                                        Console.Write(' ');
-                                        Console.CursorLeft--;
-                                        lastkeys.RemoveAt(lastkeys.Count - 1);
-                                        break;
-                                    case ConsoleKey.RightArrow:
-                                        first = true;
-                                        Console.CursorLeft++;
-                                        Console.Write(' ');
-                                        Console.CursorLeft -= 4;
-                                        Console.Write(' ');
-                                        Console.Write(' ');
-                                        Console.CursorLeft -= 2;
-                                        lastkeys.RemoveAt(lastkeys.Count - 1);
-                                        break;
-                                    case ConsoleKey.LeftArrow:
-                                        first = true;
-                                        Console.Write(' ');
-                                        lastkeys.RemoveAt(lastkeys.Count - 1);
-                                        break;
-                                }
+                                Console.Write(' ');
+                                var last_pos_str = undo[undo.Count - 1];
+                                var last_pos_split = last_pos_str.Trim('(', ')').Split(',');
+                                int last_x = int.Parse(last_pos_split[0]);
+                                int last_y = int.Parse(last_pos_split[1]);
+                                Console.SetCursorPosition(last_x, last_y);
+                                current_page[last_x, last_y] = 0;
+                                undo.RemoveAt(undo.Count - 1);
                             }
                             color_value = cur_color.GetHashCode();
                             Console.BackgroundColor = (ConsoleColor)color_value;
@@ -487,18 +422,6 @@ namespace console_draw
                                 }
                             }     
                             break;                         
-                        case ConsoleKey.F1:
-                            current_page = page1;
-                            pagegenerating();
-                            break;
-                        case ConsoleKey.F2:
-                            current_page = page2;
-                            pagegenerating();
-                            break;
-                        case ConsoleKey.F3:
-                            current_page = page3;
-                            pagegenerating();
-                            break;
                         case ConsoleKey.Escape:
                             if (main_menu_active == false)
                             {
