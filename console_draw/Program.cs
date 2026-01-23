@@ -131,7 +131,8 @@ namespace console_draw
             Console.Write("Z: undoing the last cube");
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 11);
             Console.Write("painted");
-            Console.SetCursorPosition(Console.WindowWidth / 2 -9, Console.WindowHeight / 10 + 13);
+            Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 13);
+            Console.Write("Tab: auto draw on/off");
             Console.SetCursorPosition(Console.WindowWidth / 2 + 6, Console.WindowHeight / 10 + 2);
         }
 
