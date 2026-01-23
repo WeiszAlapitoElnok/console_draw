@@ -15,6 +15,7 @@ namespace console_draw
         public static bool main_menu_active = false;
         public static int menu_pos = color_value;
         public static int main_menu_pos = 0;
+        public static bool Auto_Draw = true;
         static void pagegenerating()
         {
             Console.BackgroundColor = ConsoleColor.Black;
@@ -72,6 +73,18 @@ namespace console_draw
             Console.Write("Rainbow_Mode");
             Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (21)));
             Console.Write("Box_Drawer");
+            if (Auto_Draw)
+            {
+                Console.BackgroundColor = ConsoleColor.Green;
+                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (23)));
+                Console.Write("Auto_Draw: on");
+            }
+            else
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (23)));
+                Console.Write("Auto_Draw: off");
+            }
             Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (color_value + 1)));
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Black;
@@ -81,6 +94,7 @@ namespace console_draw
         }
         static void Main_Menu()
         {
+            Console.SetCursorPosition(0,0);
             Save();
             Console.BackgroundColor = ConsoleColor.Black;
             main_menu_active = true;
@@ -171,7 +185,34 @@ namespace console_draw
                 {
                     switch (key)
                     {
+                        case ConsoleKey.Tab:
+                            if (Auto_Draw)
+                            {
+                                cur_color = Console.BackgroundColor;
+                                Console.BackgroundColor = ConsoleColor.Red;
+                                last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
+                                Auto_Draw = false;
+                                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (23)));
+                                Console.Write("Auto_Draw: off");
+                                Console.BackgroundColor = cur_color;
+                                Console.SetCursorPosition(last_pos.Item1, last_pos.Item2);
+                            }
+                            else
+                            {
+                                cur_color = Console.BackgroundColor;
+                                Console.BackgroundColor = ConsoleColor.Green;
+                                last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
+                                Auto_Draw = true;
+                                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (23)));
+                                Console.Write("Auto_Draw: on ");
+                                Console.BackgroundColor = cur_color;
+                                Console.SetCursorPosition(last_pos.Item1, last_pos.Item2);
+                            }
+                            break;
                         case ConsoleKey.Spacebar:
+                            current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                            undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
+                            save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                             Console.Write(' ');
                             break;
                         case ConsoleKey.DownArrow:
@@ -181,12 +222,19 @@ namespace console_draw
                             }
                             else
                             {
-                                Console.Write(' ');
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
-                                save[(Console.CursorLeft - 1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
-                                Console.CursorTop++;
-                                Console.CursorLeft--;
+                                if (Auto_Draw)
+                                {
+                                    Console.CursorTop++;
+                                    current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                    undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
+                                    save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                    Console.Write(' ');
+                                    Console.CursorLeft--;
+                                }
+                                else
+                                {
+                                    Console.CursorTop++;
+                                }
                             }
                             break;
                         case ConsoleKey.UpArrow:
@@ -195,12 +243,21 @@ namespace console_draw
                             }
                             else
                             {
-                                Console.Write(' ');
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
-                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
-                                Console.CursorTop--;
-                                Console.CursorLeft--;
+                                if (Auto_Draw)
+                                {
+                                    Console.CursorTop--;
+                                    current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                    undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
+                                    save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                    Console.Write(' ');
+                                    Console.CursorTop++;
+                                    Console.CursorTop--;
+                                    Console.CursorLeft--;
+                                }
+                                else
+                                {
+                                    Console.CursorTop--;
+                                }
                             }                     
                             break;
                         case ConsoleKey.RightArrow:
@@ -210,10 +267,19 @@ namespace console_draw
                             }
                             else
                             {
-                                Console.Write(' ');
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                undo.Add((Console.CursorLeft - 1, Console.CursorTop).ToString());
-                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                if (Auto_Draw)
+                                {
+                                    Console.CursorLeft++;
+                                    current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                    undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
+                                    save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                    Console.Write(' ');
+                                    Console.CursorLeft--;
+                                }
+                                else
+                                {
+                                    Console.CursorLeft++;
+                                }
                             }                           
                             break;
                         case ConsoleKey.LeftArrow:
@@ -223,11 +289,19 @@ namespace console_draw
                             }
                             else
                             {
-                                Console.Write(' ');
-                                current_page[Console.CursorLeft, Console.CursorTop] = 1;
-                                undo.Add((Console.CursorLeft-1, Console.CursorTop).ToString());
-                                save[(Console.CursorLeft-1, Console.CursorTop)] = (Console.BackgroundColor, ' ');
-                                Console.CursorLeft = Console.CursorLeft - 2;
+                                if (Auto_Draw)
+                                {
+                                    Console.CursorLeft--;
+                                    current_page[Console.CursorLeft, Console.CursorTop] = 1;
+                                    undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
+                                    save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
+                                    Console.Write(' ');
+                                    Console.CursorLeft--;
+                                }
+                                else
+                                {
+                                    Console.CursorLeft--;
+                                }
                             }         
                             break;
                         case ConsoleKey.Delete:
