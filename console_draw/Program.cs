@@ -118,10 +118,6 @@ namespace console_draw
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 11);
             Console.Write("painted");
             Console.SetCursorPosition(Console.WindowWidth / 2 -9, Console.WindowHeight / 10 + 13);
-            Console.Write("F1,F2,F3: switching between");
-            Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 14);
-            Console.Write("pages");
-            Console.SetCursorPosition(Console.WindowWidth / 2 + 6, Console.WindowHeight / 10 + 2);
         }
 
 
@@ -132,7 +128,16 @@ namespace console_draw
 
         static void load()
         {
-            savedata = File.ReadAllLines("mentes.txt");
+            if (File.Exists("mentes.txt"))
+            {
+                savedata = File.ReadAllLines("mentes.txt");
+            }
+            else
+            {
+                File.Create("mentes.txt").Close();
+                savedata = File.ReadAllLines("mentes.txt");
+            }
+
             for (int i = 0; i < savedata.Length; i++)
             {
                 current_page[int.Parse(savedata[i].Split(',')[0]), int.Parse(savedata[i].Split(',')[1])] = 1;
@@ -364,6 +369,8 @@ namespace console_draw
                             if (undo.Count > 0)
                             {
                                 Console.Write(' ');
+                                current_page[Console.CursorLeft, Console.CursorTop] = 0;
+                                save[(Console.CursorLeft - 1, Console.CursorTop)] = (ConsoleColor.Black, ' ');
                                 var last_pos_str = undo[undo.Count - 1];
                                 var last_pos_split = last_pos_str.Trim('(', ')').Split(',');
                                 int last_x = int.Parse(last_pos_split[0]);
