@@ -10,6 +10,7 @@ namespace console_draw
         public static List<string> undo = new List<string>();
         public static string[] savedata = File.ReadAllLines("mentes.txt");
         public static Dictionary<(int x, int y), (ConsoleColor color, char op)> save = new Dictionary<(int x, int y), (ConsoleColor color, char op)>();
+        public static string[] main_menu_elements = { "Save", "Exit", "Load File" };
         public static int color_value = 0;
         public static bool active = true;
         public static bool main_menu_active = false;
@@ -116,6 +117,7 @@ namespace console_draw
         }
         static void Main_Menu()
         {
+            Console.CursorVisible = false;
             main_menu_active = true;
             Console.SetCursorPosition(0,0);
             Save();
@@ -145,6 +147,8 @@ namespace console_draw
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("Exit");
+            Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 10 + 4);
+            Console.Write("Load File");
             Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 6);
             Console.Write("Help:");
             Console.SetCursorPosition(Console.WindowWidth / 2 -9, Console.WindowHeight / 10 + 8);
@@ -156,6 +160,11 @@ namespace console_draw
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 13);
             Console.Write("Tab: auto draw on/off");
             Console.SetCursorPosition(Console.WindowWidth / 2 + 6, Console.WindowHeight / 10 + 2);
+        }
+
+        static void Load_File()
+        {
+            //itt majd open file dialogeut kel használni
         }
 
 
@@ -348,15 +357,31 @@ namespace console_draw
                         case ConsoleKey.PageDown:
                             if (main_menu_active)
                             {
-                                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 2);
-                                Console.BackgroundColor = ConsoleColor.Black;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.Write("Save");
-                                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 3);
-                                Console.BackgroundColor = ConsoleColor.White;
-                                Console.ForegroundColor = ConsoleColor.Black;
-                                Console.Write("Exit");
-                                main_menu_pos = 1;
+                                if (main_menu_pos <1)
+                                {
+                                    main_menu_pos++;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 2 + main_menu_pos);
+                                    Console.BackgroundColor = ConsoleColor.White;
+                                    Console.ForegroundColor = ConsoleColor.Black;
+                                    Console.Write(main_menu_elements[main_menu_pos]);
+                                    Console.BackgroundColor = ConsoleColor.Black;
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + (2 + main_menu_pos) - 1);
+                                    Console.Write(main_menu_elements[main_menu_pos - 1]);
+                                }
+                                else if (main_menu_pos == 1)
+                                {
+                                    main_menu_pos++;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 10 + 2 + main_menu_pos);
+                                    Console.BackgroundColor = ConsoleColor.White;
+                                    Console.ForegroundColor = ConsoleColor.Black;
+                                    Console.Write(main_menu_elements[main_menu_pos]);
+                                    Console.BackgroundColor = ConsoleColor.Black;
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2+2, Console.WindowHeight / 10 + (2 + main_menu_pos)-1);
+                                    Console.Write(main_menu_elements[main_menu_pos-1]);
+                                }
+                                
                             }
                             else
                             {
@@ -412,15 +437,30 @@ namespace console_draw
                         case ConsoleKey.PageUp:
                             if (main_menu_active)
                             {
-                                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 3);
-                                Console.BackgroundColor = ConsoleColor.Black;
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.Write("Exit");
-                                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 2);
-                                Console.BackgroundColor = ConsoleColor.White;
-                                Console.ForegroundColor = ConsoleColor.Black;
-                                Console.Write("Save");
-                                main_menu_pos = 0;
+                                if (main_menu_pos > 0 && main_menu_pos != 2)
+                                {
+                                    main_menu_pos--;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 2 + main_menu_pos);
+                                    Console.BackgroundColor = ConsoleColor.White;
+                                    Console.ForegroundColor = ConsoleColor.Black;
+                                    Console.Write(main_menu_elements[main_menu_pos]);
+                                    Console.BackgroundColor = ConsoleColor.Black;
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + (2 + main_menu_pos) + 1);
+                                    Console.Write(main_menu_elements[main_menu_pos+1]);
+                                }
+                                else if (main_menu_pos == 2)
+                                {
+                                    main_menu_pos--;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, Console.WindowHeight / 10 + 2 + main_menu_pos);
+                                    Console.BackgroundColor = ConsoleColor.White;
+                                    Console.ForegroundColor = ConsoleColor.Black;
+                                    Console.Write(main_menu_elements[main_menu_pos]);
+                                    Console.BackgroundColor = ConsoleColor.Black;
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 10 + (2 + main_menu_pos) + 1);
+                                    Console.Write(main_menu_elements[main_menu_pos+1]);
+                                }
                             }
                             else
                             {
@@ -507,8 +547,11 @@ namespace console_draw
                                     case 1:
                                         active = false;
                                         break;
-                                    }
+                                    case 2:
+                                        active = false;
+                                        break;
                                 }
+                            }
                             else
                             {
                                 switch (menu_pos)
@@ -548,6 +591,7 @@ namespace console_draw
                             else
                             {
                                 main_menu_active = false;
+                                Console.CursorVisible = true;
                                 pagegenerating();
                             }
                             
