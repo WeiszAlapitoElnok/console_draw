@@ -118,6 +118,7 @@ namespace console_draw
             Console.SetCursorPosition(Console.WindowWidth / 2 - 9, Console.WindowHeight / 10 + 11);
             Console.Write("painted");
             Console.SetCursorPosition(Console.WindowWidth / 2 -9, Console.WindowHeight / 10 + 13);
+            Console.SetCursorPosition(Console.WindowWidth / 2 + 6, Console.WindowHeight / 10 + 2);
         }
 
 
@@ -417,14 +418,13 @@ namespace console_draw
                                             for (int j = 0; j < 6; j++)
                                             {
                                                 Console.Write(' ');
+                                                save[(Console.CursorLeft - 1, Console.CursorTop)] = (Console.ForegroundColor, ' ');
                                             }
                                             Console.CursorTop++;
                                             Console.CursorLeft -= 6;
                                         }
                                         Console.CursorLeft--;
                                         Console.CursorTop -= 3;
-                                        Console.Write(' ');
-                                        Console.CursorLeft--;
                                         break;
                                 }
                             }     
