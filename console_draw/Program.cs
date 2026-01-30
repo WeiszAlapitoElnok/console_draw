@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace console_draw
 {
@@ -187,7 +188,19 @@ namespace console_draw
 
         static void Load_File()
         {
-            //itt majd open file dialogeut kel használni
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Title = "Válassz egy fájlt",
+                Filter = "Minden fájl (*.*)|*.*",
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllLines("Current.txt", File.ReadAllLines(dialog.FileName));
+                savedata = File.ReadAllLines("Current.txt");
+                pagegenerating();
+            }
         }
 
         static void Save()
@@ -195,7 +208,7 @@ namespace console_draw
             if (main_menu_active)
             {
                 File.Create("Current.txt").Close();
-                File.AppendAllLines("current.txt", File.ReadAllLines("mentes.txt"));
+                File.AppendAllLines("current.txt", savedata);
                 File.AppendAllLines("Current.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
             }
             else
@@ -225,6 +238,7 @@ namespace console_draw
                 current_page[int.Parse(savedata[i].Split(',')[0]), int.Parse(savedata[i].Split(',')[1])] = 1;
             }
         }
+        [STAThread]
         static void Main(string[] args)
         {
             Console.SetWindowSize(120,30);
@@ -601,7 +615,8 @@ namespace console_draw
                                         active = false;
                                         break;
                                     case 2:
-                                        active = false;
+                                        Load_File();
+                                        main_menu_active = false;
                                         break;
                                 }
                             }
