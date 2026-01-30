@@ -119,7 +119,6 @@ namespace console_draw
         {
             Console.CursorVisible = false;
             main_menu_active = true;
-            Console.SetCursorPosition(0,0);
             Save();
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
@@ -178,6 +177,7 @@ namespace console_draw
             else
             {
                 File.AppendAllLines("mentes.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
+                File.AppendAllLines("Current.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
             }
         }
 
@@ -259,6 +259,7 @@ namespace console_draw
                             undo.Add((Console.CursorLeft, Console.CursorTop).ToString());
                             save[(Console.CursorLeft, Console.CursorTop)] = (Console.BackgroundColor, ' ');
                             Console.Write(' ');
+                            Console.CursorLeft--;
                             break;
                         case ConsoleKey.DownArrow:
                             if (main_menu_active)
@@ -350,6 +351,7 @@ namespace console_draw
                             }         
                             break;
                         case ConsoleKey.Delete:
+                            save.Clear();
                             File.WriteAllLines("mentes.txt", new string[] { });
                             File.WriteAllLines("Current.txt", new string[] { });
                             pagegenerating();
@@ -535,6 +537,7 @@ namespace console_draw
                             Console.BackgroundColor = (ConsoleColor)color_value;
                             break;
                         case ConsoleKey.Enter:
+                            last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
                             if (main_menu_active)
                             {
                                 switch (main_menu_pos)
@@ -581,20 +584,25 @@ namespace console_draw
                                         Console.CursorTop -= 3;
                                         break;
                                 }
-                            }     
+                            }
+                            Console.SetCursorPosition(last_pos.Item1, last_pos.Item2);
+                            Console.CursorVisible = true;
                             break;                         
                         case ConsoleKey.Escape:
+                            last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
                             if (main_menu_active == false)
                             {
                                 Main_Menu();
                             }
                             else
                             {
+                                Save();
                                 main_menu_active = false;
                                 Console.CursorVisible = true;
                                 pagegenerating();
                             }
-                            
+                            Console.SetCursorPosition(last_pos.Item1, last_pos.Item2);
+                            Console.CursorVisible = true;
                             break;
                     }
                 }
