@@ -214,6 +214,7 @@ namespace console_draw
             else
             {
                 File.AppendAllLines("mentes.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
+                File.AppendAllLines("mentes.txt", savedata);
             }
         }
 
