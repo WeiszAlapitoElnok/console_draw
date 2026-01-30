@@ -17,6 +17,9 @@ namespace console_draw
         public static int menu_pos = color_value;
         public static int main_menu_pos = 0;
         public static bool Auto_Draw = true;
+        
+        
+
         static void pagegenerating()
         {
             Console.BackgroundColor = ConsoleColor.Black;
@@ -108,15 +111,36 @@ namespace console_draw
                 Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (23)));
                 Console.Write("Auto_Draw: off");
             }
-            Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (color_value + 1)));
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write(((ConsoleColor)color_value).ToString());
+            if (menu_pos > 15)
+            {
+                if (menu_pos == 16)
+                {
+                    Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (20)));
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write("Rainbow_Mode");
+                }
+                else
+                {
+                    Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (21)));
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write("Box_Drawer");
+                }
+            }
+            else
+            {
+                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 2), Console.WindowHeight - (Console.WindowHeight - (color_value + 1)));
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write(((ConsoleColor)color_value).ToString());
+            }
             Console.BackgroundColor = (ConsoleColor)color_value;
             Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 2);
         }
         static void Main_Menu()
         {
+            main_menu_pos = 0;
             Console.CursorVisible = false;
             main_menu_active = true;
             Save();
@@ -166,18 +190,17 @@ namespace console_draw
             //itt majd open file dialogeut kel használni
         }
 
-
         static void Save()
         {
             if (main_menu_active)
             {
                 File.Create("Current.txt").Close();
+                File.AppendAllLines("current.txt", File.ReadAllLines("mentes.txt"));
                 File.AppendAllLines("Current.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
             }
             else
             {
                 File.AppendAllLines("mentes.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
-                File.AppendAllLines("Current.txt", save.Select(data => $"{data.Key.x},{data.Key.y},{(int)data.Value.color},{(int)data.Value.op}"));
             }
         }
 
@@ -185,7 +208,6 @@ namespace console_draw
         {
             if (File.Exists("Current.txt"))
             {
-                File.AppendAllLines("Current.txt", File.ReadAllLines("mentes.txt"));
                 savedata = File.ReadAllLines("Current.txt");
             }
             else if (File.Exists("mentes.txt"))
@@ -225,9 +247,6 @@ namespace console_draw
             do
             {
                 key = Console.ReadKey(true).Key;
-
-                if (Console.CursorTop > 1 && Console.CursorTop < Console.WindowHeight - 2 && Console.CursorLeft > (Console.WindowWidth - Console.WindowWidth + 22) && Console.CursorLeft < Console.WindowWidth - 2)
-                {
                     switch (key)
                     {
                         case ConsoleKey.Tab:
@@ -268,6 +287,8 @@ namespace console_draw
                             }
                             else
                             {
+                            if (Console.CursorTop + 2 != Console.WindowHeight)
+                            {
                                 if (Auto_Draw)
                                 {
                                     Console.CursorTop++;
@@ -281,6 +302,12 @@ namespace console_draw
                                 {
                                     Console.CursorTop++;
                                 }
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(Console.CursorLeft, 1);
+                            }
+
                             }
                             break;
                         case ConsoleKey.UpArrow:
@@ -289,6 +316,8 @@ namespace console_draw
                             }
                             else
                             {
+                            if (Console.CursorTop-1 != 0)
+                            {
                                 if (Auto_Draw)
                                 {
                                     Console.CursorTop--;
@@ -304,7 +333,12 @@ namespace console_draw
                                 {
                                     Console.CursorTop--;
                                 }
-                            }                     
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(Console.CursorLeft, Console.WindowHeight-2);
+                            }
+                        }                     
                             break;
                         case ConsoleKey.RightArrow:
                             if (main_menu_active)
@@ -313,6 +347,8 @@ namespace console_draw
                             }
                             else
                             {
+                            if (Console.CursorLeft != Console.WindowWidth-2)
+                            {
                                 if (Auto_Draw)
                                 {
                                     Console.CursorLeft++;
@@ -326,7 +362,13 @@ namespace console_draw
                                 {
                                     Console.CursorLeft++;
                                 }
-                            }                           
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 21), Console.CursorTop);
+                            }
+
+                        }                           
                             break;
                         case ConsoleKey.LeftArrow:
                             if (main_menu_active)
@@ -335,6 +377,8 @@ namespace console_draw
                             }
                             else
                             {
+                            if (Console.CursorLeft != Console.WindowWidth - (Console.WindowWidth - 21))
+                            {
                                 if (Auto_Draw)
                                 {
                                     Console.CursorLeft--;
@@ -348,7 +392,12 @@ namespace console_draw
                                 {
                                     Console.CursorLeft--;
                                 }
-                            }         
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(Console.WindowWidth - 2, Console.CursorTop);
+                            }
+                        }         
                             break;
                         case ConsoleKey.Delete:
                             save.Clear();
@@ -548,6 +597,7 @@ namespace console_draw
                                         pagegenerating();
                                         break;
                                     case 1:
+                                        File.Delete("Current.txt");
                                         active = false;
                                         break;
                                     case 2:
@@ -589,8 +639,8 @@ namespace console_draw
                             Console.CursorVisible = true;
                             break;                         
                         case ConsoleKey.Escape:
-                            last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-                            if (main_menu_active == false)
+                        last_pos = new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
+                        if (main_menu_active == false)
                             {
                                 Main_Menu();
                             }
@@ -605,32 +655,6 @@ namespace console_draw
                             Console.CursorVisible = true;
                             break;
                     }
-                }
-                else
-                {
-                    if (Console.CursorTop == 1)
-                    {
-
-                        Console.SetCursorPosition(Console.GetCursorPosition().Left, Console.WindowHeight-3);
-                        
-                    }
-                    else if (Console.CursorLeft == Console.WindowWidth - (Console.WindowWidth - 22))
-                    {
-                        Console.SetCursorPosition(Console.WindowWidth - 2, Console.GetCursorPosition().Top);
-                    }
-                    else if (Console.CursorLeft == Console.WindowWidth - 1)
-                    {
-                        Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 23), Console.GetCursorPosition().Top);
-                    }
-                    else if (Console.CursorTop == Console.WindowHeight-2)
-                    {
-                        Console.SetCursorPosition(Console.GetCursorPosition().Left, 2);
-                    }
-                    else if (Console.CursorLeft == Console.WindowWidth-2)
-                    {
-                        Console.SetCursorPosition(Console.WindowWidth - (Console.WindowWidth - 23), Console.GetCursorPosition().Top);
-                    }
-                }
                 if (rainbow_mode)
                 {
                     cur_color = (ConsoleColor)Random.Shared.Next(0, 16);
@@ -643,8 +667,6 @@ namespace console_draw
                 
             }
             while (active);
-
-            File.Delete("Current.txt");
         }
     }
 }
